@@ -1,0 +1,50 @@
+rm(list=ls())
+library(readr)
+#data <- read.table("D:/test/normalized.csv", header = FALSE, sep = ",", skip = 10)
+data <- read.table("C:/Users/Max/Desktop/laser/Laser Log/20180621_051523/normalized.csv", header = FALSE, sep = ",", skip = 10)
+len=length(data[,1])
+width=length(data[1,])
+result_z=array(0,c(len,2))
+result_m=array(0,c(len,2))
+dl=data[,150]
+len_dl=length(dl)-1
+min_v=FALSE
+max_v=FALSE
+value=FALSE
+wave=0
+wave_big=0
+for (i in c(1:len_dl)){
+  if(!max_v&dl[i]>dl[i+1]){
+    max=dl[i]
+    max_v=TRUE
+    if(min_v){
+      min_v=FALSE
+      value=TRUE
+    }
+    result_max=i
+  }
+  else if(max_v&dl[i]<dl[i+1]){
+    min=dl[i]
+    min_v=TRUE
+    if(max_v){
+      max_v=FALSE
+      value=TRUE
+    }
+    result_min=i
+  }
+  if(value){
+  result_z[i,1]=max-min
+  result_m[i,1]=result_max
+  result_m[i,2]=result_min
+  result_z[i,2]=result_max-result_min
+  wave=wave+1
+  if((max-min)>3){
+    wave_big=wave_big+1
+  }
+  value=FALSE
+  }
+}
+max(result_z[,1])
+match(max(result_z[,1]),result_z)
+View(dl)
+View(result_m)
